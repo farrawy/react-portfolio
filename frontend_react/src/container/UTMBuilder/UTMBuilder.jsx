@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./UTMBuilder.scss";
 import { Toaster, toast } from "react-hot-toast";
 import { images } from "../../constants";
-import * as XLSX from "xlsx";
+// import * as XLSX from "xlsx";
 import { AppWrap, MotionWrap } from "../../wrapper";
 
 function UtmBuilder() {
@@ -85,27 +85,27 @@ function UtmBuilder() {
     }
   };
 
-  const exportToExcel = (data, fileName) => {
-    const ws = XLSX.utils.json_to_sheet(data);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+  // const exportToExcel = (data, fileName) => {
+  //   const ws = XLSX.utils.json_to_sheet(data);
+  //   const wb = XLSX.utils.book_new();
+  //   XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
 
-    XLSX.writeFile(wb, `${fileName}.xlsx`);
-  };
+  //   XLSX.writeFile(wb, `${fileName}.xlsx`);
+  // };
 
-  const handleExportToExcel = () => {
-    const formattedData = utmUrlHistory.map((url) => {
-      const urlObj = new URL(url);
-      return {
-        URL: urlObj.origin + urlObj.pathname,
-        "Campaign Source": urlObj.searchParams.get("utm_source") || "",
-        "Campaign Medium": urlObj.searchParams.get("utm_medium") || "",
-        "Campaign Name": urlObj.searchParams.get("utm_campaign") || "",
-      };
-    });
+  // const handleExportToExcel = () => {
+  //   const formattedData = utmUrlHistory.map((url) => {
+  //     const urlObj = new URL(url);
+  //     return {
+  //       URL: urlObj.origin + urlObj.pathname,
+  //       "Campaign Source": urlObj.searchParams.get("utm_source") || "",
+  //       "Campaign Medium": urlObj.searchParams.get("utm_medium") || "",
+  //       "Campaign Name": urlObj.searchParams.get("utm_campaign") || "",
+  //     };
+  //   });
 
-    exportToExcel(formattedData, `UTM_URL_HISTORY_${Date.now()}`);
-  };
+  //   exportToExcel(formattedData, `UTM_URL_HISTORY_${Date.now()}`);
+  // };
 
   useEffect(() => {
     const storedUtmUrl = localStorage.getItem("utmUrl-history");
@@ -237,7 +237,7 @@ function UtmBuilder() {
                   onClick={clearUTMUrlHistory}>
                   Clear History
                 </button>
-                <button onClick={handleExportToExcel}>Export To Excel</button>
+                {/* <button onClick={handleExportToExcel}>Export To Excel</button> */}
               </div>
             </div>
             <div className="utm-url-history__list">

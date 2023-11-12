@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import "./UTMBuilder.scss";
 import { Toaster, toast } from "react-hot-toast";
 import { images } from "../../constants";
+import * as XLSX from "xlsx";
+import { AppWrap, MotionWrap } from "../../wrapper";
 
 function UtmBuilder() {
   const [url, setUrl] = useState("");
@@ -19,18 +21,28 @@ function UtmBuilder() {
       utm_medium: campaignMedium,
       utm_campaign: campaignName,
     }).toString();
-    const newUtmUrl = `${url}?${params}`;
-    setUtmUrl(newUtmUrl);
+    let newUtmUrl = `${url}?${params}`;
 
-    setUrl("");
-    setCampaignSource("");
-    setCampaignMedium("");
-    setCampaignName("");
+    // Format and validate the URL
+    newUtmUrl = formatAndValidateUrl(newUtmUrl);
 
-    // Update the UTM Url history in the state and local storage
-    const updatedUrlHistory = [...utmUrlHistory, newUtmUrl];
-    setUtmUrlHistory(updatedUrlHistory);
-    localStorage.setItem("utmUrl-history", JSON.stringify(updatedUrlHistory));
+    if (!newUtmUrl) return;
+
+    if (newUtmUrl) {
+      setUtmUrl(newUtmUrl);
+
+      setUrl("");
+      setCampaignSource("");
+      setCampaignMedium("");
+      setCampaignName("");
+
+      // Update the UTM Url history in the state and local storage
+      const updatedUrlHistory = [...utmUrlHistory, newUtmUrl];
+      setUtmUrlHistory(updatedUrlHistory);
+      localStorage.setItem("utmUrl-history", JSON.stringify(updatedUrlHistory));
+    } else {
+      console.error("Invalid URL");
+    }
   };
 
   const clearUTMUrlHistory = () => {
@@ -53,6 +65,46 @@ function UtmBuilder() {
     } else {
       return `https://${url}`;
     }
+  };
+
+  const formatAndValidateUrl = (url) => {
+    if (!url) return null; // Return null for empty URLs
+
+    // Ensure the URL starts with http:// or https://
+    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+      url = `https://${url}`;
+    }
+
+    // Validate the URL
+    try {
+      new URL(url); // This will throw an error if the URL is invalid
+      return url;
+    } catch (error) {
+      console.error(`Invalid URL: ${url}`);
+      return null;
+    }
+  };
+
+  const exportToExcel = (data, fileName) => {
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+
+    XLSX.writeFile(wb, `${fileName}.xlsx`);
+  };
+
+  const handleExportToExcel = () => {
+    const formattedData = utmUrlHistory.map((url) => {
+      const urlObj = new URL(url);
+      return {
+        URL: urlObj.origin + urlObj.pathname,
+        "Campaign Source": urlObj.searchParams.get("utm_source") || "",
+        "Campaign Medium": urlObj.searchParams.get("utm_medium") || "",
+        "Campaign Name": urlObj.searchParams.get("utm_campaign") || "",
+      };
+    });
+
+    exportToExcel(formattedData, `UTM_URL_HISTORY_${Date.now()}`);
   };
 
   useEffect(() => {
@@ -179,11 +231,14 @@ function UtmBuilder() {
           <div className="generated-url">
             <div>
               <label>UTM URL History:</label>
-              <button
-                className="clear-history-btn"
-                onClick={clearUTMUrlHistory}>
-                Clear History
-              </button>
+              <div>
+                <button
+                  className="clear-history-btn"
+                  onClick={clearUTMUrlHistory}>
+                  Clear History
+                </button>
+                <button onClick={handleExportToExcel}>Export To Excel</button>
+              </div>
             </div>
             <div className="utm-url-history__list">
               {utmUrlHistory.map((url, index) => (
@@ -220,4 +275,7 @@ function UtmBuilder() {
   );
 }
 
-export default UtmBuilder;
+export default AppWrap(
+  MotionWrap(UtmBuilder, "app__utm-builder"),
+  "utm-builder",
+);

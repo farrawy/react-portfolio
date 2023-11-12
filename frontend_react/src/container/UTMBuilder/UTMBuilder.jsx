@@ -46,6 +46,15 @@ function UtmBuilder() {
     localStorage.setItem("utmUrl-history", JSON.stringify(updatedUrlHistory));
   };
 
+  const formatExternalUrl = (url) => {
+    if (!url) return url;
+    if (url.startsWith("http://") || url.startsWith("https://")) {
+      return url;
+    } else {
+      return `https://${url}`;
+    }
+  };
+
   useEffect(() => {
     const storedUtmUrl = localStorage.getItem("utmUrl-history");
     if (storedUtmUrl) {
@@ -149,7 +158,7 @@ function UtmBuilder() {
           <label>Generated UTM URL:</label>
           <div className="utm-url">
             <a
-              href={utmUrl}
+              href={formatExternalUrl(utmUrl)}
               target="_blank"
               onClick={() => copyToClipboard(utmUrl)}>
               {utmUrl}
@@ -180,7 +189,7 @@ function UtmBuilder() {
               {utmUrlHistory.map((url, index) => (
                 <div key={index} className="utm-url-history__list__item">
                   <a
-                    href={url}
+                    href={formatExternalUrl(url)}
                     target="_blank"
                     onClick={() => copyToClipboard(url)}>
                     {url}

@@ -1,20 +1,28 @@
-import { useState } from "react";
 import "./App.scss";
 
-import { About, Footer, Header, Skills, Testimonial, Work } from "./container";
+import { About, Footer, Header, Skills, UTMBuilder, Work } from "./container";
 import { Navbar } from "./components/index";
+import { Route, Routes } from "react-router-dom";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <div className="app">
-      <Navbar />
-      <Header />
-      <About />
-      <Work />
-      <Skills />
-      <Footer />
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <>
+              <Navbar />
+              <Header />
+              <About />
+              <Work />
+              <Skills />
+              <Footer />
+            </>
+          }
+        />
+        <Route path="/utm_builder" element={<UTMBuilder />} />
+      </Routes>
     </div>
   );
 }

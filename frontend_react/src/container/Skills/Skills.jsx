@@ -34,12 +34,10 @@ const Skills = () => {
               whileInView={{ opacity: [0, 1] }}
               transition={{ duration: 0.5 }}
               className="app__skills-item app__flex"
-              key={skill.name}
-            >
+              key={skill.name}>
               <div
                 className="app__flex"
-                style={{ backgroundColor: skill.bgColor }}
-              >
+                style={{ backgroundColor: skill.bgColor }}>
                 <img src={urlFor(skill.icon)} alt={skill.name} />
               </div>
               <p className="p-text">{skill.name}</p>
@@ -61,8 +59,7 @@ const Skills = () => {
                       className="app__skills-exp-work"
                       data-tip
                       data-for={work.name}
-                      key={work.name}
-                    >
+                      key={work.name}>
                       <h4 className="bold-text">{work.name}</h4>
                       <p className="p-text">{work.company}</p>
                     </motion.div>
@@ -70,8 +67,7 @@ const Skills = () => {
                       id={work.name}
                       effect="solid"
                       arrowColor="#fff"
-                      className="skills-tooltip"
-                    >
+                      className="skills-tooltip">
                       {work.description}
                     </ReactTooltip>
                   </>
@@ -88,5 +84,5 @@ const Skills = () => {
 export default AppWrap(
   MotionWrap(Skills, "app__skills"),
   "skills",
-  "app__whitebg"
+  "app__whitebg",
 );
